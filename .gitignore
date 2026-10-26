@@ -1,0 +1,17 @@
+# Secrets
+.env
+**/.env
+
+# Python
+venv/
+**/venv/
+__pycache__/
+**/__pycache__/
+
+# Node.js
+node_modules/
+**/node_modules/
+
+# Build files
+dist/
+**/dist/
