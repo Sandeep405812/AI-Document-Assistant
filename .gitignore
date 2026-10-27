@@ -15,3 +15,5 @@ node_modules/
 # Build files
 dist/
 **/dist/
+
+ai-service/chroma_db/
