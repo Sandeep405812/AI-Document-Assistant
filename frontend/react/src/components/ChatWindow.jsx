@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 function ChatWindow() {
   // 1. Input box ki value
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // 2. Chat ke saare messages
   const [messages, setMessages] = useState([
@@ -15,12 +16,12 @@ function ChatWindow() {
   // 3. Chat ke last element ka reference
   const messagesEndRef = useRef(null);
 
-  // 4. Messages change hone par chat ko neeche scroll karo
+  // 4. Messages ya loading change hone par chat ko neeche scroll karo
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth",
     });
-  }, [messages]);
+  }, [messages, loading]);
 
   // 5. User ka message handle karo
   async function handleSend(event) {
@@ -28,7 +29,7 @@ function ChatWindow() {
 
     const trimmedMessage = message.trim();
 
-    if (!trimmedMessage) return;
+    if (!trimmedMessage || loading) return;
 
     // User ka message chat list mein add karo
     setMessages((previousMessages) => [
@@ -41,21 +42,19 @@ function ChatWindow() {
 
     // Input box clear karo
     setMessage("");
+    setLoading(true);
 
     // Backend ko request bhejo
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: trimmedMessage,
-          }),
-        }
-      );
+      const response = await fetch("http://127.0.0.1:5000/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: trimmedMessage,
+        }),
+      });
 
       const data = await response.json();
 
@@ -78,9 +77,14 @@ function ChatWindow() {
         ...previousMessages,
         {
           role: "assistant",
-          text: "Backend se connect nahi ho paya. Server check karo.",
+          text:
+            error.message && error.message !== "Request failed"
+              ? `Error: ${error.message}`
+              : "Backend se connect nahi ho paya. Server check karo.",
         },
       ]);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -111,6 +115,15 @@ function ChatWindow() {
           </div>
         ))}
 
+        {loading && (
+          <div className="flex max-w-xs items-center gap-2 rounded-2xl border border-slate-200 bg-white p-4 text-slate-500">
+            <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-blue-600 [animation-delay:-0.3s]"></span>
+            <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-blue-600 [animation-delay:-0.15s]"></span>
+            <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-blue-600"></span>
+            <span className="ml-1 text-xs">AI soch raha hai...</span>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -122,19 +135,21 @@ function ChatWindow() {
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           type="text"
-          placeholder="Ask a question..."
-          className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-blue-500"
+          placeholder={loading ? "AI reply kar raha hai..." : "Ask a question..."}
+          disabled={loading}
+          className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-blue-500 disabled:opacity-60"
         />
 
         <button
           type="submit"
-          className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700"
+          disabled={loading || !message.trim()}
+          className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Send
+          {loading ? "Sending..." : "Send"}
         </button>
       </form>
     </section>
   );
 }
 
-export default ChatWindow;
+export default ChatWindow;

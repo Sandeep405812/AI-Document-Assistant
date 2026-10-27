@@ -1,5 +1,5 @@
 
-function Sidebar() {
+function Sidebar({onMenuClick,activeMenu}) {
     const menuItems = [
         "Chat",
         "Upload Documents",
@@ -17,11 +17,16 @@ function Sidebar() {
             <nav className="space-y-2">
                 {menuItems.map((item) => (
                     <button
-                        key={item}
-                        className="w-full rounded-lg px-4 py-3 text-left hover:bg-slate-800"
-                    >
-                        {item}
-                    </button>
+    key={item}
+    onClick={() => onMenuClick(item)}
+    className={`w-full rounded-lg px-4 py-3 text-left ${
+        activeMenu === item
+            ? "bg-slate-800"
+            : "hover:bg-slate-800"
+    }`}
+>
+    {item}
+</button>
                 ))}
             </nav>
 
