@@ -1,69 +1,91 @@
 # 🤖 AI Document Assistant
 
-An AI-powered document assistant that helps users interact with documents and get answers using Generative AI.
-
-The project is being developed using React, Node.js, Express.js, FastAPI, and Google's Gemini AI.
+AI Document Assistant is a full-stack application that enables users to chat with an AI assistant and upload documents for AI-powered analysis. The project combines a React frontend, an Express backend, and a FastAPI AI service powered by Google Gemini.
 
 ## 🚀 Project Overview
 
-AI Document Assistant aims to make it easier to understand and interact with documents through a conversational interface.
+This project is designed to make document interaction easier through a conversational interface. Users can:
 
-Users will be able to ask questions and receive AI-generated responses. The project will be extended with document upload and Retrieval-Augmented Generation (RAG) capabilities.
+- ask questions in a chat interface
+- upload PDF or text documents
+- send documents through the backend to the AI service
+- extract readable text from uploaded files
+- receive AI-generated responses from Gemini
+
+The application is currently in active development, with core chat and document-processing flows already connected across the stack.
 
 ## ✨ Features
 
-- Interactive chat interface built with React.
-- Node.js and Express.js backend API.
-- Python FastAPI service for AI integration.
-- Google Gemini AI integration using LangChain.
-- Planned PDF upload and text extraction.
-- Planned document-based question answering using RAG.
-- Planned chat history and document management.
+### Implemented
+- React-based chat UI
+- Express API server that proxies requests to the AI service
+- FastAPI service with Gemini integration
+- PDF and text upload support
+- Document text extraction for PDF and TXT files
+- API endpoints for chat and document upload
 
-## 🛠️ Tech Stack
+### Planned
+- Persistent chat history
+- Document management and listing
+- Vector storage and embeddings
+- RAG-based document Q&A
+- User authentication and profiles
+- Testing and deployment setup
 
-**Frontend**
+## 🧩 Tech Stack
+
+### Frontend
 - React
+- Vite
 - JavaScript
 - Tailwind CSS
 
-**Backend**
+### Backend
 - Node.js
 - Express.js
-- REST APIs
+- CORS
+- Multer
 
-**AI Service**
+### AI Service
 - Python
 - FastAPI
-- LangChain
-- Google Gemini AI
-
-**Planned Technologies**
-- ChromaDB
-- Vector embeddings
-- MongoDB
+- LangChain Google GenAI
+- Google Gemini
+- pypdf
 
 ## 📁 Project Structure
 
 ```text
-AI Document Assistant/
-├── frontend/
-├── backend/
-├── ai-service/
+AI-Document-Assistant/
 ├── .gitignore
-└── README.md
+├── README.md
+├── backend/
+│   ├── package.json
+│   └── server.js
+├── frontend/
+│   └── react/
+│       ├── package.json
+│       ├── index.html
+│       └── src/
+│           ├── App.jsx
+│           ├── components/
+│           ├── index.css
+│           └── main.jsx
+└── ai-service/
+    └── main.py
 ```
 
 ## ⚙️ Getting Started
 
 ### Prerequisites
 
-Install the following:
+Make sure you have the following installed:
 
-- Node.js and npm
+- Node.js 18+
+- npm
 - Python 3.11+
 - Git
-- Google Gemini API key
+- A Google Gemini API key
 
 ### 1. Clone the Repository
 
@@ -74,52 +96,59 @@ cd AI-Document-Assistant
 
 ### 2. Start the Backend
 
-Open a terminal:
+Open a terminal and run:
 
 ```bash
 cd backend
 npm install
-```
-
-Configure the required environment variables before starting the server.
-
-Run the backend using the start script configured in `package.json`. For example:
-
-```bash
 npm start
 ```
 
+The backend starts on port 5000 by default and forwards requests to the AI service.
+
 ### 3. Start the AI Service
 
-Open another terminal:
+Open a second terminal:
 
 ```bash
 cd ai-service
+python -m venv .venv
+source .venv/bin/activate
 ```
 
-Activate your Python virtual environment and install the project's Python dependencies.
+On Windows PowerShell:
 
-Create a `.env` file inside `ai-service`:
+```powershell
+cd ai-service
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Install the required Python packages:
+
+```bash
+pip install fastapi uvicorn python-dotenv langchain-google-genai pypdf
+```
+
+Create a `.env` file in `ai-service/`:
 
 ```env
 GOOGLE_API_KEY=your_gemini_api_key
 ```
 
-Replace the placeholder with your own API key. Never commit your actual API key to GitHub.
-
-Start the FastAPI service:
+Then start the API:
 
 ```bash
 python -m uvicorn main:app --reload --port 8000
 ```
 
-Open the interactive API documentation at:
+The API docs are available at:
 
-`http://127.0.0.1:8000/docs`
+- http://127.0.0.1:8000/docs
 
 ### 4. Start the Frontend
 
-Open another terminal:
+Open a third terminal:
 
 ```bash
 cd frontend/react
@@ -127,29 +156,50 @@ npm install
 npm run dev
 ```
 
-Open the local URL displayed in your terminal.
+Then open the local URL shown in the terminal.
 
-**Note:** The exact commands may need adjustment according to the scripts and dependencies configured in the project's `package.json` files.
+## 🔌 API Endpoints
 
-## 🔑 Environment Variables
+### Backend
+- `POST /api/chat` — send a chat message to the AI service
+- `POST /api/upload` — upload a PDF or TXT file for text extraction
 
-Keep API keys and other secrets in local `.env` files.
+### AI Service
+- `GET /` — health check
+- `GET /chat?message=...` — simple chat endpoint
+- `POST /api/chat` — JSON chat request
+- `POST /api/upload` — file upload endpoint with document text extraction
 
-Never upload `.env` files, API keys, or virtual environment folders to GitHub.
+## 🔐 Environment Variables
+
+Keep secrets in local environment files and do not commit them to GitHub.
+
+Required values:
+
+```env
+# ai-service/.env
+GOOGLE_API_KEY=your_gemini_api_key
+```
+
+Optional backend config:
+
+```env
+# backend/.env
+PORT=5000
+```
 
 ## 🗺️ Roadmap
 
 - [x] React chat interface
 - [x] Express backend API
 - [x] FastAPI AI service
-- [x] Basic Gemini AI integration
-- [ ] Connect React, Express, and FastAPI end to end
-- [ ] Upload PDF documents
-- [ ] Extract and split document text
-- [ ] Generate embeddings
-- [ ] Store vectors in ChromaDB
-- [ ] Implement RAG-based document question answering
-- [ ] Add chat history and document management
+- [x] Gemini AI integration
+- [x] PDF/TXT upload support
+- [x] Document text extraction
+- [ ] Persistent chat history
+- [ ] Document management and listing
+- [ ] Embedding generation and ChromaDB setup
+- [ ] RAG-based document Q&A
 - [ ] Testing and deployment
 
 ## 👨‍💻 Author
