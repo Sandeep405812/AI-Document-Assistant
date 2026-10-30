@@ -1,52 +1,88 @@
 # 🤖 AI Document Assistant
 
-AI Document Assistant is a full-stack document Q&A application that lets users upload PDF and TXT files, extract their text, and ask questions about the content through an AI-powered chat interface.
+<div align="center">
 
-The project currently works as a local prototype built around a React frontend, an Express backend, and a Python FastAPI service that uses a Retrieval-Augmented Generation (RAG) pipeline with Gemini and ChromaDB.
+![AI Document Assistant Banner](https://img.shields.io/badge/AI-Document%20Assistant-6C63FF?style=for-the-badge&logo=googledocs&logoColor=white)
+![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat-square&logo=react)
+![Express](https://img.shields.io/badge/Express-Node.js-000000?style=flat-square&logo=express)
+![FastAPI](https://img.shields.io/badge/FastAPI-Python-009688?style=flat-square&logo=fastapi)
+![Gemini](https://img.shields.io/badge/Gemini-AI-8A2BE2?style=flat-square)
 
-## 🚀 Project Overview
+<p>
+  A full-stack document Q&A application that lets users upload <strong>PDF</strong> and <strong>TXT</strong> files, extract the text, and ask natural-language questions through an AI-powered chat interface.
+</p>
 
-This app is designed to make document interaction easier through a conversational workflow:
+</div>
 
-- users upload a PDF or TXT file
-- the backend forwards the file to the AI service
-- the service extracts readable text from the document
-- the text is split into chunks and stored in a vector database
-- the user asks a question in the chat UI
-- relevant document chunks are retrieved and sent to Gemini to generate an answer
+## ✨ Overview
 
-The current implementation is a working local prototype with chat and upload flows connected across the stack.
+AI Document Assistant is designed to make document interaction feel conversational. Instead of manually searching through long files, users can upload a document, let the AI process it, and then ask questions in plain English.
 
-## ✨ Features
+This project is currently a working local prototype connecting:
+
+- a React frontend
+- an Express backend
+- a Python FastAPI AI service
+- Google Gemini-powered answer generation
+- ChromaDB-based retrieval for document search
+
+## 🚀 Why it stands out
+
+- Smart document upload and parsing
+- Context-aware Q&A using RAG
+- Clean chat-like user experience
+- Local prototype built for rapid experimentation
+- Easy to run and extend
+
+## 🧠 How it works
+
+```mermaid
+flowchart LR
+    A[Upload PDF / TXT] --> B[Backend receives file]
+    B --> C[AI service extracts text]
+    C --> D[Split into chunks]
+    D --> E[Create embeddings]
+    E --> F[Store in ChromaDB]
+    F --> G[Ask a question]
+    G --> H[Retrieve relevant chunks]
+    H --> I[Gemini generates answer]
+    I --> J[Display response in chat]
+```
+
+## 🌟 Features
 
 ### Implemented
+
 - React-based chat interface
 - Express API server for frontend-to-AI communication
 - Python FastAPI AI service
-- Gemini integration for answer generation
+- Gemini integration for response generation
 - PDF and TXT upload support
-- Text extraction for uploaded documents
+- Text extraction from uploaded documents
 - RAG-style chunking and retrieval
-- ChromaDB vector storage for document embeddings
+- ChromaDB vector storage for embeddings
 - API endpoints for chat and upload workflows
 
 ### Planned / Not yet implemented
+
 - persistent chat history
 - document management and listing
 - user authentication and profiles
-- advanced document indexing and metadata
-- production deployment and hosting setup
+- advanced metadata indexing
+- production deployment and hosting
 - automated testing
 
 ## 🧩 Tech Stack
 
 ### Frontend
+
 - React
 - Vite
 - JavaScript
 - Tailwind CSS
 
 ### Backend
+
 - Node.js
 - Express.js
 - CORS
@@ -54,6 +90,7 @@ The current implementation is a working local prototype with chat and upload flo
 - dotenv
 
 ### AI Service
+
 - Python
 - FastAPI
 - LangChain
@@ -111,16 +148,14 @@ Make sure you have the following installed:
 - Git
 - Google Gemini API key
 
-### 1. Clone the Repository
+### 1) Clone the repository
 
 ```bash
 git clone https://github.com/Sandeep405812/AI-Document-Assistant.git
 cd AI-Document-Assistant
 ```
 
-### 2. Start the Backend
-
-Open a terminal and run:
+### 2) Start the backend
 
 ```bash
 cd backend
@@ -128,9 +163,9 @@ npm install
 npm start
 ```
 
-The backend runs on port 5000 by default and proxies requests to the AI service.
+The backend runs on port `5000` by default and proxies requests to the AI service.
 
-### 3. Start the AI Service
+### 3) Start the AI service
 
 Open a second terminal:
 
@@ -170,7 +205,7 @@ The API docs are available at:
 
 - http://127.0.0.1:8000/docs
 
-### 4. Start the Frontend
+### 4) Start the frontend
 
 Open a third terminal:
 
@@ -185,6 +220,7 @@ Then open the local URL shown in the terminal.
 ## 🔌 API Endpoints
 
 ### Backend
+
 - `POST /api/chat` — send a chat message to the AI service
 - `POST /api/upload` — upload a PDF or TXT file for processing
 
@@ -202,23 +238,38 @@ Example upload request:
 - allowed file types: `.pdf`, `.txt`
 
 ### AI Service
+
 - `GET /` — health check
 - `GET /chat?message=...` — simple chat endpoint
 - `POST /api/chat` — JSON chat request for the document Q&A flow
 - `POST /api/upload` — file upload endpoint that extracts text, splits it into chunks, and stores it in ChromaDB
 
-## 🧠 Current AI Workflow
+## 🧠 Current AI workflow
 
-The AI service is built around a lightweight RAG pipeline:
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant AI as AI Service
+    participant DB as ChromaDB
+    participant Gemini
 
-1. a PDF or TXT file is uploaded
-2. text is extracted using `pypdf` or plain text reading
-3. content is split into manageable chunks
-4. embeddings are created using the configured LangChain embedding model
-5. chunks are stored in ChromaDB
-6. the user question is converted into a retrieval query
-7. relevant chunks are fetched and passed to Gemini
-8. Gemini generates an answer grounded in the uploaded document
+    User->>Frontend: Upload document
+    Frontend->>Backend: POST /api/upload
+    Backend->>AI: Forward uploaded file
+    AI->>AI: Extract text + chunk content
+    AI->>DB: Store embeddings
+    User->>Frontend: Ask question
+    Frontend->>Backend: POST /api/chat
+    Backend->>AI: Message + context
+    AI->>DB: Retrieve relevant chunks
+    DB-->>AI: Matching document segments
+    AI->>Gemini: Generate grounded answer
+    Gemini-->>AI: Final response
+    AI-->>Backend: Response JSON
+    Backend-->>Frontend: Display answer
+```
 
 ## 🔐 Environment Variables
 
@@ -255,7 +306,7 @@ PORT=5000
 
 ## 📌 Notes
 
-This project is a local, prototype-level implementation. It currently focuses on core document Q&A workflows and is not yet production-ready for multi-user deployment, persistent storage, or authentication.
+This project is a local, prototype-level implementation. It currently focuses on the core document Q&A workflow and is not yet production-ready for multi-user deployment, persistent storage, or authentication-heavy environments.
 
 ## 👨‍💻 Author
 
@@ -265,4 +316,6 @@ GitHub: [Sandeep405812](https://github.com/Sandeep405812)
 
 ---
 
-This project is under active development.
+<div align="center">
+  <strong>🚀 This project is under active development.</strong>
+</div>
